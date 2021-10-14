@@ -1,0 +1,27 @@
+{
+  "name": "@o2oa/component-tools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vue": "vue -V"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@git.o2oa.net:2020/o2oa/o2-component-tools.git"
+  },
+  "bin": {
+    "o2-cmpt": "bin/o2.js"
+  },
+  "author": "Tommy",
+  "license": "MIT",
+  "dependencies": {
+    "@vue/cli": "^4.5.14",
+    "commander": "^8.2.0",
+    "inquirer": "^8.1.5",
+    "inquirer-search-checkbox": "^1.0.0",
+    "shelljs": "^0.8.4"
+  }
+}
