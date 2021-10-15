@@ -19,9 +19,13 @@
   "license": "MIT",
   "dependencies": {
     "@vue/cli": "^4.5.14",
+    "chalk": "^4.1.2",
     "commander": "^8.2.0",
     "inquirer": "^8.1.5",
     "inquirer-search-checkbox": "^1.0.0",
+    "jszip": "^3.7.1",
+    "lodash": "^4.17.21",
+    "node-fetch": "^3.0.0",
     "shelljs": "^0.8.4"
   }
 }
