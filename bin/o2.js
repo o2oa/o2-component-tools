@@ -3,11 +3,10 @@
 import { Command } from 'commander/esm.mjs';
 import fs from 'fs/promises';
 import create from '../lib/create.js';
-// import {cmd_addServer, cmd_delServer} from './commands/env.js'
-// import {cmd_getApplication} from './commands/application.js'
+
 const program = new Command();
 
-let pkg = JSON.parse(await fs.readFile('./package.json', {'encoding': 'utf8'}));
+let pkg = JSON.parse(await fs.readFile(new URL('../package.json', import.meta.url), {'encoding': 'utf8'}));
 
 program.version(pkg.version, '-v, --vers', 'output the current version');
 
