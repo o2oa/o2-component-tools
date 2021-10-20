@@ -26,5 +26,8 @@
     "lodash": "^4.17.21",
     "node-fetch": "^3.0.0",
     "shelljs": "^0.8.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
