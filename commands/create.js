@@ -110,7 +110,7 @@ class componentFactory{
             await Promise.all([
                 copyFile(zip, '.gitignore', '.gitignore'),
                 copyFile(zip, 'vue.config.js', 'vue.config.js'),
-                copyFile(zip, 'o2.config.json', 'o2.config.json'),
+                copyFile(zip, 'o2.config.js', 'o2.config.js'),
                 copyFile(zip, 'public/favicon.ico', 'public/favicon.ico'),
                 copyFile(zip, 'public/index.html', 'public/index.html'),
                 copyFolder(zip, 'public/config'),
