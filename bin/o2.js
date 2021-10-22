@@ -2,7 +2,7 @@
 
 import { Command } from 'commander/esm.mjs';
 import fs from 'fs/promises';
-import create from '../lib/create.js';
+import create from '../commands/create.js';
 
 const program = new Command();
 
@@ -26,6 +26,7 @@ program
     .option('-x, --proxy <proxyUrl>', 'Use specified proxy when creating project')
     .option('-b, --bare', 'Scaffold project without beginner instructions')
     .option('--skipGetStarted', 'Skip displaying "Get started" instructions')
+    .option('-w, --framework', 'Which framework to use to create O2OA component')
     .action((name, opts) => {
         create(name, opts); });
 

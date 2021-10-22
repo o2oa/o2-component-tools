@@ -1,4 +1,5 @@
-import options from './options.js';
+import options from '../lib/options.js';
+import {ask} from '../lib/questions.js'
 import fs from 'fs/promises';
 import vueCreate from '@vue/cli/lib/create.js';
 import writeFileTree from '@vue/cli/lib/util/writeFileTree.js';
@@ -12,11 +13,8 @@ import utils from '@vue/cli-shared-utils';
 const {hasYarn, hasPnpm3OrLater} = utils;
 
 
-const templateProjectName = options.template.project[options.framework];
-const templateGitAddress = options.template.git+templateProjectName;
-const o2publicGitAddress = options.dependency.git;
-
-
+let templateProjectName = "";
+let templateGitAddress = "";
 let componentName = '';
 let componentPath = '';
 
@@ -154,6 +152,23 @@ class componentFactory{
     }
 }
 
-export default componentFactory[options.framework] || function(){
-    console.log(`${chalk.red('[ERROR] Does not support using '+options.framework+' to create O2OA Components')}`);
-};
+export default async function (name, opts) {
+    if (!opts.framework) opts.framework = await ask("framework");
+    const framework = opts.framework.toLowerCase();
+    if (options[framework]) {
+        templateProjectName = options[framework].template.project;
+        templateGitAddress = options[framework].template.git + templateProjectName;
+
+        if (componentFactory[framework]) {
+            componentFactory[framework](name, opts);
+        } else {
+            console.log(`${chalk.red('[ERROR] Does not support using ' + options.framework + ' to create O2OA Components')}`);
+        }
+    } else {
+        console.log(`${chalk.red('[ERROR] Does not support using ' + options.framework + ' to create O2OA Components')}`);
+    }
+}
+//
+// componentFactory[options.framework] || function(){
+//     console.log(`${chalk.red('[ERROR] Does not support using '+options.framework+' to create O2OA Components')}`);
+// };
