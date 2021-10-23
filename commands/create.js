@@ -2,11 +2,22 @@ import options from '../lib/options.js';
 import {ask} from '../lib/questions.js'
 import vueCreate from '@vue/cli/lib/create.js';
 import chalk from 'chalk';
+import path from 'path';
+import { URL } from 'url';
+import utils from '@vue/cli-shared-utils';
+const {hasYarn, hasPnpm3OrLater} = utils;
+const packageManager = (
+    (hasYarn() ? 'yarn' : null) ||
+    (hasPnpm3OrLater() ? 'pnpm' : 'npm')
+);
+
+const __dirname = (() => {let x = path.dirname(decodeURI(new URL(import.meta.url).pathname)); return path.resolve( (process.platform == "win32") ? x.substr(1) : x ); })();
 
 class componentFactory{
     static async vue3(name, opts) {
         let o = (opts || {});
-        o.preset = options.vue3;
+        const p = path.resolve(__dirname, options.vue3);
+        o.preset = p;
         o.skipGetStarted = true;
         await vueCreate(name, o);
 
@@ -15,7 +26,7 @@ class componentFactory{
         console.log();
         console.log(
             `👉  Get started with the following commands:\n\n` +
-            chalk.cyan(` ${chalk.gray('$')} cd ${componentPath}\n`) +
+            chalk.cyan(` ${chalk.gray('$')} cd ${name}\n`) +
             chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn serve' : packageManager === 'pnpm' ? 'pnpm run serve' : 'npm run serve'}`)
         );
     }
