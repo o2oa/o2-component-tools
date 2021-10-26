@@ -15,18 +15,20 @@ const __dirname = (() => {let x = path.dirname(decodeURI(new URL(import.meta.url
 
 class componentFactory{
     static async vue3(name, opts) {
+        const componentPath = 'x_component_'+name.replace(/\./g, '_');
+
         let o = (opts || {});
         const p = path.resolve(__dirname, options.vue3);
         o.preset = p;
         o.skipGetStarted = true;
-        await vueCreate(name, o);
+        await vueCreate(componentPath, o);
 
         console.log();
-        console.log(`👉  `+`${chalk.green('O2OA Comonent "'+name+'" Created!')}`);
+        console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
         console.log();
         console.log(
             `👉  Get started with the following commands:\n\n` +
-            chalk.cyan(` ${chalk.gray('$')} cd ${name}\n`) +
+            chalk.cyan(` ${chalk.gray('$')} cd ${componentPath}\n`) +
             chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn serve' : packageManager === 'pnpm' ? 'pnpm run serve' : 'npm run serve'}`)
         );
     }
