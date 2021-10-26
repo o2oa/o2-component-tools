@@ -45,7 +45,14 @@ class componentFactory{
                 let p = path.resolve(tpPath, file);
                 let stats = await fs.stat(p);
                 if (stats.isFile()){
-                    let content = await fs.readFile(p);
+                    let content;
+                    const ext = path.extname(p).toLowerCase();
+                    if (ext==='.js' || ext==='.html' || ext==='.css'){
+                        content = await fs.readFile(p, 'utf8');
+                        content = content.replace(/\<\%= projectName \%\>/g, name);
+                    }else{
+                        content = await fs.readFile(p);
+                    }
                     await fs.writeFile(path.resolve(cPath, file), content);
                 }
                 if (stats.isDirectory()){

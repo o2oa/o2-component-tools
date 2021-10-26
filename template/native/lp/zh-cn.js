@@ -1,5 +1,5 @@
-MWF.xApplication.Empty.LP = {
-	"title": "空",
+MWF.xApplication.<%= projectName %>.LP = {
+	"title": "<%= projectName %>",
 	"welcome": "Welcome to O2OA Component",
 	"taskListTitle": "此处列出您的5个最新待办",
 
