@@ -5,7 +5,8 @@ import chalk from 'chalk';
 import path from 'path';
 import { URL } from 'url';
 import utils from '@vue/cli-shared-utils';
-import fs from 'fs/promises';
+import f from 'fs';
+const fs = f.promises;
 const {hasYarn, hasPnpm3OrLater} = utils;
 const packageManager = (
     (hasYarn() ? 'yarn' : null) ||
@@ -37,7 +38,14 @@ class componentFactory{
         const componentPath = 'x_component_'+name.replace(/\./g, '_');
         const templatePath = path.resolve(__dirname, options["o2_native"]);
 
-        await fs.mkdir(componentPath, {recursive: true});
+        if (f.existsSync(componentPath)){
+            console.log();
+            console.log(`👉  `+`${chalk.red('Can not Create Component "'+name+'", file already exists "'+componentPath+'" !')}`);
+
+            return '';
+        }
+
+        await fs.mkdir(componentPath);
 
         const cpfile = async function(cPath, tpPath){
             const files = await fs.readdir(tpPath);
