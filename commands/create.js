@@ -5,6 +5,7 @@ import chalk from 'chalk';
 import path from 'path';
 import { URL } from 'url';
 import utils from '@vue/cli-shared-utils';
+import fs from 'fs/promises';
 const {hasYarn, hasPnpm3OrLater} = utils;
 const packageManager = (
     (hasYarn() ? 'yarn' : null) ||
@@ -32,11 +33,40 @@ class componentFactory{
             chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn serve' : packageManager === 'pnpm' ? 'pnpm run serve' : 'npm run serve'}`)
         );
     }
+    static async o2_native(name, opts) {
+        const componentPath = 'x_component_'+name.replace(/\./g, '_');
+        const templatePath = path.resolve(__dirname, options["o2_native"]);
+
+        await fs.mkdir(componentPath, {recursive: true});
+
+        const cpfile = async function(cPath, tpPath){
+            const files = await fs.readdir(tpPath);
+            for (const file of files){
+                let p = path.resolve(tpPath, file);
+                let stats = await fs.stat(p);
+                if (stats.isFile()){
+                    let content = await fs.readFile(p);
+                    await fs.writeFile(path.resolve(cPath, file), content);
+                }
+                if (stats.isDirectory()){
+                    let cp = path.resolve(cPath, file)
+                    await fs.mkdir(cp, {recursive: true})
+                    await cpfile(cp, p)
+                }
+            }
+        }
+        await cpfile(componentPath, templatePath);
+
+        console.log();
+        console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
+    }
+
 }
 
 export default async function (name, opts) {
     if (!opts.framework) opts.framework = await ask("framework");
     const framework = opts.framework.toLowerCase();
+
     if (componentFactory[framework]) {
         componentFactory[framework](name, opts);
     } else {
