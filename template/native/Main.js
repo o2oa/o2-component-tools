@@ -1,4 +1,4 @@
-MWF.xApplication.<%= projectName %>.options.multitask = true;
+MWF.xApplication.<%= projectName %>.options.multitask = false;
 MWF.xApplication.<%= projectName %>.Main = new Class({
 	Extends: MWF.xApplication.Common.Main,
 	Implements: [Options, Events],
