@@ -100,9 +100,7 @@ class componentFactory{
 
                 await fs.writeFile('../gulpapps.js', updateAppContent);
             }
-        }catch(e){
-            throw e;
-        }
+        }catch{}
     }
 }
 
