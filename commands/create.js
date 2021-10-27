@@ -5,7 +5,8 @@ import chalk from 'chalk';
 import path from 'path';
 import { URL } from 'url';
 import utils from '@vue/cli-shared-utils';
-import fs from 'fs/promises';
+import f from 'fs';
+const fs = f.promises;
 const {hasYarn, hasPnpm3OrLater} = utils;
 const packageManager = (
     (hasYarn() ? 'yarn' : null) ||
@@ -23,6 +24,7 @@ class componentFactory{
         o.preset = p;
         o.skipGetStarted = true;
         await vueCreate(componentPath, o);
+        await componentFactory.writeGulpAppFile(componentPath);
 
         console.log();
         console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
@@ -37,7 +39,14 @@ class componentFactory{
         const componentPath = 'x_component_'+name.replace(/\./g, '_');
         const templatePath = path.resolve(__dirname, options["o2_native"]);
 
-        await fs.mkdir(componentPath, {recursive: true});
+        if (f.existsSync(componentPath)){
+            console.log();
+            console.log(`👉  `+`${chalk.red('Can not Create Component "'+name+'", file already exists "'+componentPath+'" !')}`);
+
+            return '';
+        }
+
+        await fs.mkdir(componentPath);
 
         const cpfile = async function(cPath, tpPath){
             const files = await fs.readdir(tpPath);
@@ -64,10 +73,37 @@ class componentFactory{
         }
         await cpfile(componentPath, templatePath);
 
+        await componentFactory.writeGulpAppFile(componentPath, '["move", "min"]');
+
         console.log();
         console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
     }
+    static async writeGulpAppFile(componentPath, tasks) {
+        try {
+            const appContent = await fs.readFile('../gulpapps.js', 'utf8');
+            const reg = RegExp('\\"folder.*\\"'+componentPath+'\\"');
+            if (!reg.test(appContent)){
+                const thisComponentText = `{ "folder": "${componentPath}", "tasks": ${tasks || "[]"} }\n`;
+                const regexp = RegExp('(var\\s*apps\\s*=\\s*\\[)([\\s]*)({?[\\s\\S]*}?)([\\s\\S]*\\][\\s\\S]*)(module.exports.*)','g');
 
+                const matches = [...[...appContent.matchAll(regexp)][0]];
+                matches.shift();
+                let updateAppContent = '';
+                matches.forEach((match, i)=>{
+                    if (i===2){
+                        const t = match.trim();
+                        updateAppContent += t+((t) ? ',\n    '+thisComponentText : thisComponentText);
+                    }else{
+                        updateAppContent += match
+                    }
+                });
+
+                await fs.writeFile('../gulpapps.js', updateAppContent);
+            }
+        }catch(e){
+            throw e;
+        }
+    }
 }
 
 export default async function (name, opts) {
