@@ -6,7 +6,7 @@ MWF.xApplication.<%= projectName %>.Main = new Class({
 	options: {
 		"style1": "default",
 		"style": "default",
-		"name": "Empty",
+		"name": "<%= projectName %>",
 		"mvcStyle": "style.css",
 		"icon": "icon.png",
 		"title": MWF.xApplication.<%= projectName %>.LP.title
