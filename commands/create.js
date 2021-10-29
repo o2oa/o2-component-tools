@@ -24,6 +24,7 @@ class componentFactory{
         o.preset = p;
         o.skipGetStarted = true;
         await vueCreate(componentPath, o);
+        await componentFactory.writeGulpAppFile(componentPath);
 
         console.log();
         console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
@@ -72,10 +73,35 @@ class componentFactory{
         }
         await cpfile(componentPath, templatePath);
 
+        await componentFactory.writeGulpAppFile(componentPath, '["move", "min"]');
+
         console.log();
         console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
     }
+    static async writeGulpAppFile(componentPath, tasks) {
+        try {
+            const appContent = await fs.readFile('../gulpapps.js', 'utf8');
+            const reg = RegExp('\\"folder.*\\"'+componentPath+'\\"');
+            if (!reg.test(appContent)){
+                const thisComponentText = `{ "folder": "${componentPath}", "tasks": ${tasks || "[]"} }\n`;
+                const regexp = RegExp('(var\\s*apps\\s*=\\s*\\[)([\\s]*)({?[\\s\\S]*}?)([\\s\\S]*\\][\\s\\S]*)(module.exports.*)','g');
 
+                const matches = [...[...appContent.matchAll(regexp)][0]];
+                matches.shift();
+                let updateAppContent = '';
+                matches.forEach((match, i)=>{
+                    if (i===2){
+                        const t = match.trim();
+                        updateAppContent += t+((t) ? ',\n    '+thisComponentText : thisComponentText);
+                    }else{
+                        updateAppContent += match
+                    }
+                });
+
+                await fs.writeFile('../gulpapps.js', updateAppContent);
+            }
+        }catch{}
+    }
 }
 
 export default async function (name, opts) {

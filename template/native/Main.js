@@ -1,4 +1,4 @@
-MWF.xApplication.<%= projectName %>.options.multitask = true;
+MWF.xApplication.<%= projectName %>.options.multitask = false;
 MWF.xApplication.<%= projectName %>.Main = new Class({
 	Extends: MWF.xApplication.Common.Main,
 	Implements: [Options, Events],
@@ -9,10 +9,10 @@ MWF.xApplication.<%= projectName %>.Main = new Class({
 		"name": "Empty",
 		"mvcStyle": "style.css",
 		"icon": "icon.png",
-		"title": MWF.xApplication.Empty.LP.title
+		"title": MWF.xApplication.<%= projectName %>.LP.title
 	},
 	onQueryLoad: function(){
-		this.lp = MWF.xApplication.Empty.LP;
+		this.lp = MWF.xApplication.<%= projectName %>.LP;
 	},
 	loadApplication: function(callback){
 		var url = this.path+this.options.style+"/view.html";
@@ -31,7 +31,7 @@ MWF.xApplication.<%= projectName %>.Main = new Class({
 	doSomething: function(){
 
 	},
-	openTask: function(e, data, id){
+	openTask: function(id, e, data){
 		layout.openApplication(null, "process.Work", {"workid": id});
 	},
 	openCalendar: function(){
