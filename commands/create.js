@@ -59,6 +59,8 @@ class componentFactory{
                     if (ext==='.js' || ext==='.html' || ext==='.css'){
                         content = await fs.readFile(p, 'utf8');
                         content = content.replace(/\<\%= projectName \%\>/g, name);
+                        content = content.replace(/\<\%= projectPath \%>/g, componentPath);
+
                     }else{
                         content = await fs.readFile(p);
                     }
