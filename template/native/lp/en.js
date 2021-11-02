@@ -10,5 +10,6 @@ MWF.xApplication.<%= projectName %>.LP = {
 	"openCalendar": "Open Calendar",
 	"openOrganization": "Open Organization",
 	"startProcess": "Start Process",
+	"createDocument": "Create Document",
 	"openInBrowser": "Open In Browser"
 };

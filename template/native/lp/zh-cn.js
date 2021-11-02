@@ -10,5 +10,6 @@ MWF.xApplication.<%= projectName %>.LP = {
 	"openCalendar": "打开日程管理",
 	"openOrganization": "打开组织管理",
 	"startProcess": "启动流程",
+	"createDocument": "创建信息",
 	"openInBrowser": "在新浏览器窗口中打开"
 };

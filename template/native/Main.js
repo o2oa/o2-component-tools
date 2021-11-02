@@ -45,6 +45,8 @@ MWF.xApplication.<%= projectName %>.Main = new Class({
 	},
 	startProcess: function(){
 		o2.api.page.startProcess();
+	},
+	createDocument: function(){
+		o2.api.page.createDocument();
 	}
-
 });
