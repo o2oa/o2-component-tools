@@ -4,6 +4,7 @@ import vueCreate from '@vue/cli/lib/create.js';
 import chalk from 'chalk';
 import path from 'path';
 import { URL } from 'url';
+import sh from 'child_process';
 import utils from '@vue/cli-shared-utils';
 import f from 'fs';
 const fs = f.promises;
@@ -34,6 +35,44 @@ class componentFactory{
             chalk.cyan(` ${chalk.gray('$')} cd ${componentPath}\n`) +
             chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn serve' : packageManager === 'pnpm' ? 'pnpm run serve' : 'npm run serve'}`)
         );
+    }
+    static async react(name, opts) {
+        const componentPath = 'x_component_'+name.replace(/\./g, '_');
+
+        //const subprocess = sh.spawn('npx create-react-app '+componentPath);
+
+        const subprocess = sh.spawn('npx.cmd', ['create-react-app',componentPath]);
+
+        subprocess.stdout.on('data', (data) => {
+            if (!data.toString().startsWith('Success')){
+                console.log(`${data}`);
+            }
+        });
+        subprocess.stderr.on('data', (data) => {
+            console.error(`${data}`);
+        });
+        subprocess.on('close', (code) => {
+            console.log(`child process close all stdio with code ${code}`);
+        });
+
+        //
+        //
+        //
+        // let o = (opts || {});
+        // const p = path.resolve(__dirname, options.vue3);
+        // o.preset = p;
+        // o.skipGetStarted = true;
+        // await vueCreate(componentPath, o);
+        // await componentFactory.writeGulpAppFile(componentPath);
+        //
+        // console.log();
+        // console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
+        // console.log();
+        // console.log(
+        //     `👉  Get started with the following commands:\n\n` +
+        //     chalk.cyan(` ${chalk.gray('$')} cd ${componentPath}\n`) +
+        //     chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn serve' : packageManager === 'pnpm' ? 'pnpm run serve' : 'npm run serve'}`)
+        // );
     }
     static async o2_native(name, opts) {
         const componentPath = 'x_component_'+name.replace(/\./g, '_');

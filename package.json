@@ -21,8 +21,10 @@
     "@vue/cli": "^4.5.14",
     "chalk": "^4.1.2",
     "commander": "^8.2.0",
+    "create-react-app": "^4.0.3",
     "inquirer": "^8.1.5",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "shelljs": "^0.8.4"
   },
   "publishConfig": {
     "access": "public"
