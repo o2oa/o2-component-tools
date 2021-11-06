@@ -11,7 +11,7 @@ function App() {
     o2.api.page.openApplication("Org");
   }
   function openInBrowser() {
-    cmpt.openInNewBrowser(true);
+    component.openInNewBrowser(true);
   }
   function startProcess(){
     o2.api.page.startProcess();
