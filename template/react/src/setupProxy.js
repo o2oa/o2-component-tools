@@ -1,0 +1,1 @@
+module.exports = require('@o2oa/react-scripts/o2/proxy');

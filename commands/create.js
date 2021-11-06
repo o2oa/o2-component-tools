@@ -9,6 +9,10 @@ import utils from '@vue/cli-shared-utils';
 import f from 'fs';
 const fs = f.promises;
 const {hasYarn, hasPnpm3OrLater} = utils;
+
+//import PackageManager from '@vue/cli/lib/util/ProjectPackageManager.js'
+import { executeCommand } from '@vue/cli/lib/util/executeCommand.js'
+
 const packageManager = (
     (hasYarn() ? 'yarn' : null) ||
     (hasPnpm3OrLater() ? 'pnpm' : 'npm')
@@ -38,41 +42,51 @@ class componentFactory{
     }
     static async react(name, opts) {
         const componentPath = 'x_component_'+name.replace(/\./g, '_');
+        const templatePath = path.resolve(__dirname, options["react"]);
 
-        //const subprocess = sh.spawn('npx create-react-app '+componentPath);
+        try{
+            await executeCommand('npx', ['create-react-app', componentPath, '--scripts-version', '@o2oa/react-scripts']);
 
-        const subprocess = sh.spawn('npx.cmd', ['create-react-app',componentPath]);
+            console.log();
+            console.log(`👉  `+`Generate O2OA component ... `);
+            console.log();
 
-        subprocess.stdout.on('data', (data) => {
-            if (!data.toString().startsWith('Success')){
-                console.log(`${data}`);
-            }
-        });
-        subprocess.stderr.on('data', (data) => {
-            console.error(`${data}`);
-        });
-        subprocess.on('close', (code) => {
-            console.log(`child process close all stdio with code ${code}`);
-        });
+            const pkgStr = await fs.readFile(path.resolve(componentPath, 'package.json'), 'utf8');
+            const pkg = JSON.parse(pkgStr);
+            pkg.scripts['o2-deploy'] = 'react-scripts build';
+            await executeCommand(packageManager, ['install', '@o2oa/component'], componentPath);
 
-        //
-        //
-        //
-        // let o = (opts || {});
-        // const p = path.resolve(__dirname, options.vue3);
-        // o.preset = p;
-        // o.skipGetStarted = true;
-        // await vueCreate(componentPath, o);
-        // await componentFactory.writeGulpAppFile(componentPath);
-        //
-        // console.log();
-        // console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
-        // console.log();
-        // console.log(
-        //     `👉  Get started with the following commands:\n\n` +
-        //     chalk.cyan(` ${chalk.gray('$')} cd ${componentPath}\n`) +
-        //     chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn serve' : packageManager === 'pnpm' ? 'pnpm run serve' : 'npm run serve'}`)
-        // );
+            const host = await ask("o2serverHost");
+            const port = await ask("o2serverCenterPort");
+            const webPort = await ask("o2serverWebPort");
+            const isHttps = await ask("isHttps");
+
+            console.log(host);
+            await componentFactory.cpfile(componentPath, templatePath, {
+                projectName: name,
+                projectPath: componentPath,
+                o2serverHost: host,
+                o2serverCenterPort: port,
+                o2serverWebPort: webPort,
+                isHttps: isHttps
+            });
+
+            await componentFactory.writeGulpAppFile(componentPath);
+
+            console.log();
+            console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
+
+        }catch(e){
+            throw e;
+        }
+
+
+        // const subprocess = sh.spawn('npm.cmd', ['install'], {
+        //     stdio: ['inherit', 'inherit', 'inherit']
+        // });
+        // subprocess.on('close', (code) => {
+        //     console.log(`child process close all stdio with code ${code}`);
+        // });
     }
     static async o2_native(name, opts) {
         const componentPath = 'x_component_'+name.replace(/\./g, '_');
@@ -86,38 +100,42 @@ class componentFactory{
         }
 
         await fs.mkdir(componentPath);
-
-        const cpfile = async function(cPath, tpPath){
-            const files = await fs.readdir(tpPath);
-            for (const file of files){
-                let p = path.resolve(tpPath, file);
-                let stats = await fs.stat(p);
-                if (stats.isFile()){
-                    let content;
-                    const ext = path.extname(p).toLowerCase();
-                    if (ext==='.js' || ext==='.html' || ext==='.css'){
-                        content = await fs.readFile(p, 'utf8');
-                        content = content.replace(/\<\%= projectName \%\>/g, name);
-                        content = content.replace(/\<\%= projectPath \%>/g, componentPath);
-
-                    }else{
-                        content = await fs.readFile(p);
-                    }
-                    await fs.writeFile(path.resolve(cPath, file), content);
-                }
-                if (stats.isDirectory()){
-                    let cp = path.resolve(cPath, file)
-                    await fs.mkdir(cp, {recursive: true})
-                    await cpfile(cp, p)
-                }
-            }
-        }
-        await cpfile(componentPath, templatePath);
+        await componentFactory.cpfile(componentPath, templatePath, {
+            projectName: name,
+            projectPath: componentPath
+        });
 
         await componentFactory.writeGulpAppFile(componentPath, '["move", "min"]');
 
         console.log();
         console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
+    }
+    static async cpfile(cPath, tpPath, opts){
+        const files = await fs.readdir(tpPath);
+        for (const file of files){
+            let p = path.resolve(tpPath, file);
+            let stats = await fs.stat(p);
+            if (stats.isFile()){
+                let content;
+                const ext = path.extname(p).toLowerCase();
+                if (ext==='.js' || ext==='.html' || ext==='.css'){
+                    content = await fs.readFile(p, 'utf8');
+                    Object.keys(opts).forEach((k)=>{
+                        const reg = new RegExp('\<\%= '+k+' \%\>', 'g');
+                        content = content.replace(reg, opts[k]);
+                    });
+
+                }else{
+                    content = await fs.readFile(p);
+                }
+                await fs.writeFile(path.resolve(cPath, file), content);
+            }
+            if (stats.isDirectory()){
+                let cp = path.resolve(cPath, file)
+                await fs.mkdir(cp, {recursive: true})
+                await componentFactory.cpfile(cp, p, opts)
+            }
+        }
     }
     static async writeGulpAppFile(componentPath, tasks) {
         try {
