@@ -56,6 +56,10 @@ class componentFactory{
             pkg.scripts['o2-deploy'] = 'react-scripts build';
             await executeCommand(packageManager, ['install', '@o2oa/component'], componentPath);
 
+            console.log();
+            console.log(`👉  `+`Configure O2OA development server ... `);
+            console.log();
+
             const host = await ask("o2serverHost");
             const port = await ask("o2serverCenterPort");
             const webPort = await ask("o2serverWebPort");
