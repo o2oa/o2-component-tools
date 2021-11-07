@@ -53,8 +53,12 @@ class componentFactory{
 
             const pkgStr = await fs.readFile(path.resolve(componentPath, 'package.json'), 'utf8');
             const pkg = JSON.parse(pkgStr);
-            pkg.scripts['o2-deploy'] = 'react-scripts build';
-            await executeCommand(packageManager, ['install', '@o2oa/component'], componentPath);
+            pkg.scripts['o2-deploy'] = 'cross-env BUILD_PATH=../../dest/'+componentPath+' react-scripts build';
+
+            fs.writeFile(path.resolve(componentPath, 'package.json'), JSON.stringify(pkg, '\t'));
+
+            await executeCommand(packageManager, ['install', '@o2oa/component', '-save'], componentPath);
+            await executeCommand(packageManager, ['install', 'cross-env', '-save-dve'], componentPath);
 
             console.log();
             console.log(`👉  `+`Configure O2OA development server ... `);
