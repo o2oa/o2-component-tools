@@ -1,7 +1,7 @@
 MWF.xApplication.<%= projectName %>.LP = {
     "title": "<%= projectName %>",
 
-    "welcome": "Welcome to O2OA Component with Vue.js",
+    "welcome": "Welcome to O2OA Component with React",
     "taskListTitle": "Here are your top 5 task",
 
     "taskTitle": "Title",
