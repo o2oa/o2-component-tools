@@ -22,7 +22,6 @@ MWF.xApplication.<%= projectName %>.Main = new Class({
 	},
 	loadTaskView: function(){
 		o2.Actions.load("x_processplatform_assemble_surface").TaskAction.listMyPaging(1,5, function(json){
-			debugger;
 			this.taskListView.loadHtml(this.path+this.options.style+"/taskView.html", {"bind": {"lp": this.lp, "data": json.data}, "module": this}, function(){
 				this.doSomething();
 			}.bind(this));
