@@ -57,8 +57,14 @@ class componentFactory{
 
             fs.writeFile(path.resolve(componentPath, 'package.json'), JSON.stringify(pkg, '\t'));
 
-            await executeCommand(packageManager, ['install', '@o2oa/component', '-save'], componentPath);
-            await executeCommand(packageManager, ['install', 'cross-env', '-save-dve'], componentPath);
+            if (packageManager==='yarn'){
+                await executeCommand(packageManager, ['add', '@o2oa/component'], componentPath);
+                await executeCommand(packageManager, ['add', 'cross-env', '--dve'], componentPath);
+            }else{
+                await executeCommand(packageManager, ['install', '@o2oa/component', '-save'], componentPath);
+                await executeCommand(packageManager, ['install', 'cross-env', '-save-dve'], componentPath);
+            }
+
 
             console.log();
             console.log(`👉  `+`Configure O2OA development server ... `);
