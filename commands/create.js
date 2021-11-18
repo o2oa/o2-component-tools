@@ -54,6 +54,7 @@ class componentFactory{
             const pkgStr = await fs.readFile(path.resolve(componentPath, 'package.json'), 'utf8');
             const pkg = JSON.parse(pkgStr);
             pkg.scripts['o2-deploy'] = `cross-env BUILD_PATH=../../dest/${componentPath} PUBLIC_URL=../${componentPath}/ react-scripts build`;
+            pkg.scripts['o2-build'] = `cross-env BUILD_PATH=../../../target/o2server/servers/webServer/${componentPath} PUBLIC_URL=../${componentPath}/ react-scripts build`;
 
             fs.writeFile(path.resolve(componentPath, 'package.json'), JSON.stringify(pkg, '\t'));
 
