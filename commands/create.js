@@ -45,7 +45,7 @@ class componentFactory{
         const templatePath = path.resolve(__dirname, options["react"]);
 
         try{
-            await executeCommand('npx', ['create-react-app@latest', componentPath, '--scripts-version', '@o2oa/react-scripts@latest']);
+            await executeCommand('npx', ['create-react-app', componentPath, '--scripts-version', '@o2oa/react-scripts']);
 
             console.log();
             console.log(`👉  `+`Generate O2OA component ... `);
