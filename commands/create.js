@@ -21,11 +21,11 @@ const packageManager = (
 const __dirname = (() => {let x = path.dirname(decodeURI(new URL(import.meta.url).pathname)); return path.resolve( (process.platform == "win32") ? x.substr(1) : x ); })();
 
 class componentFactory{
-    static async vue3(name, opts) {
+    static async vue3(name, opts, preset) {
         const componentPath = 'x_component_'+name.replace(/\./g, '_');
 
         let o = (opts || {});
-        const p = path.resolve(__dirname, options.vue3);
+        const p = preset || path.resolve(__dirname, options.vue3);
         o.preset = p;
         o.skipGetStarted = true;
         await vueCreate(componentPath, o);
@@ -39,6 +39,9 @@ class componentFactory{
             chalk.cyan(` ${chalk.gray('$')} cd ${componentPath}\n`) +
             chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn serve' : packageManager === 'pnpm' ? 'pnpm run serve' : 'npm run serve'}`)
         );
+    }
+    static async vue2(name, opts) {
+        componentFactory.vue3(name, opts, path.resolve(__dirname, options.vue2));
     }
     static async react(name, opts) {
         const componentPath = 'x_component_'+name.replace(/\./g, '_');
@@ -179,12 +182,16 @@ class componentFactory{
 }
 
 export default async function (name, opts) {
-    if (!opts.framework) opts.framework = await ask("framework");
-    const framework = opts.framework.toLowerCase();
+    if (name.includes("_") || name.includes("-") || name.includes("$") || name.includes("#") || name.includes("@")){
+        console.log(`${chalk.red('[ERROR] The name cannot contain symbols such as "_", "-", "$", "#", "@", etc.')}`);
+    }else{
+        if (!opts.framework) opts.framework = await ask("framework");
+        const framework = opts.framework.toLowerCase();
 
-    if (componentFactory[framework]) {
-        componentFactory[framework](name, opts);
-    } else {
-        console.log(`${chalk.red('[ERROR] Does not support using ' + options.framework + ' to create O2OA Components')}`);
+        if (componentFactory[framework]) {
+            componentFactory[framework](name, opts);
+        } else {
+            console.log(`${chalk.red('[ERROR] Does not support using ' + options.framework + ' to create O2OA Components')}`);
+        }
     }
 }

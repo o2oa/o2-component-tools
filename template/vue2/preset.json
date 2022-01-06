@@ -1,0 +1,10 @@
+{
+  "vueVersion": "2",
+  "plugins": {
+    "@o2oa/vue-cli-plugin-o2component-vue2": {
+      "vueVersion": "2",
+      "version": "latest",
+      "prompts": true
+    }
+  }
+}
