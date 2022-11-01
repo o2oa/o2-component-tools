@@ -128,6 +128,28 @@ class componentFactory{
         console.log();
         console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
     }
+    static async oovm(name, opts) {
+        const componentPath = 'x_component_'+name.replace(/\./g, '_');
+        const templatePath = path.resolve(__dirname, options["oovm"]);
+
+        if (f.existsSync(componentPath)){
+            console.log();
+            console.log(`👉  `+`${chalk.red('Can not Create Component "'+name+'", file already exists "'+componentPath+'" !')}`);
+
+            return '';
+        }
+
+        await fs.mkdir(componentPath);
+        await componentFactory.cpfile(componentPath, templatePath, {
+            projectName: name,
+            projectPath: componentPath
+        });
+
+        await componentFactory.writeGulpAppFile(componentPath, '["move", "min"]');
+
+        console.log();
+        console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
+    }
     static async cpfile(cPath, tpPath, opts){
         const files = await fs.readdir(tpPath);
         for (const file of files){
