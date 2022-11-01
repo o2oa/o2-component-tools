@@ -139,16 +139,44 @@ class componentFactory{
             return '';
         }
 
+        const host = await ask("o2serverHost");
+        const port = await ask("o2serverCenterPort");
+        const webPort = await ask("o2serverWebPort");
+        const isHttps = await ask("isHttps");
+
         await fs.mkdir(componentPath);
         await componentFactory.cpfile(componentPath, templatePath, {
             projectName: name,
-            projectPath: componentPath
+            projectPath: componentPath,
+            o2serverHost: host,
+            o2serverCenterPort: port,
+            o2serverWebPort: webPort,
+            isHttps: isHttps
         });
 
-        await componentFactory.writeGulpAppFile(componentPath, '["move", "min"]');
+        // const pkgStr = await fs.readFile(path.resolve(componentPath, 'package.json'), 'utf8');
+        // const pkg = JSON.parse(pkgStr);
+        // pkg.scripts['o2-deploy'] = `cross-env BUILD_PATH=../../dest/${componentPath} PUBLIC_URL=../${componentPath}/ react-scripts build`;
+        // pkg.scripts['o2-build'] = `cross-env BUILD_PATH=../../../target/o2server/servers/webServer/${componentPath} PUBLIC_URL=../${componentPath}/ react-scripts build`;
+        //
+        // fs.writeFile(path.resolve(componentPath, 'package.json'), JSON.stringify(pkg, '\t'));
+
+        if (packageManager==='yarn'){
+            await executeCommand(packageManager, ['install', ''], componentPath);
+        }else{
+            await executeCommand(packageManager, ['install', '', ''], componentPath);
+        }
+
+        await componentFactory.writeGulpAppFile(componentPath);
 
         console.log();
         console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
+        console.log();
+        console.log(
+            `👉  Get started with the following commands:\n\n` +
+            chalk.cyan(` ${chalk.gray('$')} cd ${componentPath}\n`) +
+            chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn serve' : packageManager === 'pnpm' ? 'pnpm run start' : 'npm run start'}`)
+        );
     }
     static async cpfile(cPath, tpPath, opts){
         const files = await fs.readdir(tpPath);
@@ -158,7 +186,7 @@ class componentFactory{
             if (stats.isFile()){
                 let content;
                 const ext = path.extname(p).toLowerCase();
-                if (ext==='.js' || ext==='.html' || ext==='.css'){
+                if (ext==='.js' || ext==='.html' || ext==='.css' || ext==='.json'){
                     content = await fs.readFile(p, 'utf8');
                     Object.keys(opts).forEach((k)=>{
                         const reg = new RegExp('\<\%= '+k+' \%\>', 'g');
