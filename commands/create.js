@@ -162,7 +162,7 @@ class componentFactory{
         // fs.writeFile(path.resolve(componentPath, 'package.json'), JSON.stringify(pkg, '\t'));
 
         if (packageManager==='yarn'){
-            await executeCommand(packageManager, ['add', ''], componentPath);
+            await executeCommand(packageManager, ['', ''], componentPath);
         }else{
             await executeCommand(packageManager, ['install', '', ''], componentPath);
         }
