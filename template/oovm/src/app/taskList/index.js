@@ -5,7 +5,6 @@ import template from './template.html';
 export default content({
     template,
     async bind() {
-        debugger;
         const json = await o2.Actions.load("x_processplatform_assemble_surface").TaskAction.listMyPaging(1, 5);
         return {
             lp,
