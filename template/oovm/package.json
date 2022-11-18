@@ -20,11 +20,11 @@
     "access": "public"
   },
   "devDependencies": {
-    "@o2oa/oovm-scripts": "^1.0.7"
+    "@o2oa/oovm-scripts": "^1.0.9"
   },
   "dependencies": {
     "@o2oa/component": "^1.1.6",
-    "@o2oa/oovm": "^2.1.4"
+    "@o2oa/oovm": "^2.1.11"
   },
   "browserslist": [
     "> 0.5%",
