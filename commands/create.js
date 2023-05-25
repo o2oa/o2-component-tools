@@ -4,7 +4,6 @@ import vueCreate from '@vue/cli/lib/create.js';
 import chalk from 'chalk';
 import path from 'path';
 import { URL } from 'url';
-import sh from 'child_process';
 import utils from '@vue/cli-shared-utils';
 import f from 'fs';
 const fs = f.promises;
