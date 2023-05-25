@@ -162,9 +162,14 @@ class componentFactory{
         // fs.writeFile(path.resolve(componentPath, 'package.json'), JSON.stringify(pkg, '\t'));
 
         if (packageManager==='yarn'){
-            await executeCommand(packageManager, ['', ''], componentPath);
+            await executeCommand(packageManager, ['add', '@o2oa/component'], componentPath);
+            await executeCommand(packageManager, ['add', '@o2oa/oovm'], componentPath);
+            await executeCommand(packageManager, ['add', '@o2oa/oovm-scripts', '--dve'], componentPath);
         }else{
-            await executeCommand(packageManager, ['install', '', ''], componentPath);
+            await executeCommand(packageManager, ['install', '@o2oa/component', '-save'], componentPath);
+            await executeCommand(packageManager, ['install', '@o2oa/oovm', '-save'], componentPath);
+            await executeCommand(packageManager, ['install', '@o2oa/oovm-scripts', '-save-dve'], componentPath);
+            // await executeCommand(packageManager, ['install', '', ''], componentPath);
         }
 
         await componentFactory.writeGulpAppFile(componentPath);
@@ -175,7 +180,7 @@ class componentFactory{
         console.log(
             `👉  Get started with the following commands:\n\n` +
             chalk.cyan(` ${chalk.gray('$')} cd ${componentPath}\n`) +
-            chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn serve' : packageManager === 'pnpm' ? 'pnpm run start' : 'npm run start'}`)
+            chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn start' : packageManager === 'pnpm' ? 'pnpm run start' : 'npm run start'}`)
         );
     }
     static async cpfile(cPath, tpPath, opts){
