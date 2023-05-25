@@ -1,6 +1,6 @@
 {
   "name": "@o2oa/component-tools",
-  "version": "1.0.51",
+  "version": "1.0.52",
   "description": "",
   "main": "index.js",
   "type": "module",
@@ -18,7 +18,7 @@
   "author": "Tommy",
   "license": "MIT",
   "dependencies": {
-    "@vue/cli": "^4.5.14",
+    "@vue/cli": "^5.0.8",
     "chalk": "^4.1.2",
     "commander": "^8.2.0",
     "inquirer": "^8.1.5",

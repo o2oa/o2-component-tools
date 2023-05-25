@@ -30,13 +30,13 @@ program
     .action((name, opts) => {
         create(name, opts); });
 
-program .command('serve')
-    .description('Start dev server')
-    .action(() => { cmd_delServer(name); });
-
-program.command('build')
-    .description('Get Application from server')
-    .action((opts) => { cmd_getApplication(opts); });
+// program .command('serve')
+//     .description('Start dev server')
+//     .action(() => { cmd_delServer(name); });
+//
+// program.command('build')
+//     .description('Get Application from server')
+//     .action((opts) => { cmd_getApplication(opts); });
 
 program.parse(process.argv);
 
