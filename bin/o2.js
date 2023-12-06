@@ -3,6 +3,8 @@
 import { Command } from 'commander/esm.mjs';
 import fs from 'fs/promises';
 import create from '../commands/create.js';
+import oo_init from '../commands/oo-init.js';
+import oo_upgrade from '../commands/oo-upgrade.js';
 
 const program = new Command();
 
@@ -30,16 +32,39 @@ program
     .action((name, opts) => {
         create(name, opts); });
 
-// program .command('serve')
-//     .description('Start dev server')
-//     .action(() => { cmd_delServer(name); });
-//
-// program.command('build')
-//     .description('Get Application from server')
-//     .action((opts) => { cmd_getApplication(opts); });
+program
+    .command('new <app-name>' )
+    .description('create a new O2OA component')
+    .option('-w, --framework', 'Which framework to use to create O2OA component')
+    .option('-p, --protocol', 'What protocol is used to clone git repository. https or ssh')
+    .option('-n, --npmjs', 'Use official registry')
+    .action((name, opts) => {
+        opts.version='oo';
+        create(name, opts);
+    });
+
+program
+    .command('init' )
+    .description('Initialize the O2OA front-end development environment')
+    .option('-y, --confirm', 'Confirm to perform initialization operation')
+    .option('-r, --reinstall', 'Reinstall all dependencies')
+    .option('-n, --npmjs', 'Use official registry')
+    .option('-p, --protocol', 'What protocol is used to clone git repository. https or ssh')
+    .action((opts) => {
+        oo_init(opts);
+    });
+
+program
+    .command('upgrade' )
+    .description('Upgrade O2OA front-end development environment')
+    .option('-r, --reinstall', 'Reinstall all dependencies')
+    .option('-p, --protocol', 'What protocol is used to clone git repository. https or ssh')
+    .option('-n, --npmjs', 'Use official registry')
+    .option('-y, --confirm', 'Confirm to perform initialization operation')
+    .action((opts) => {
+        opts.confirm = true;
+        oo_upgrade(opts);
+    });
+
 
 program.parse(process.argv);
-
-// const options = program.opts();
-// console.log(options);
-//console.log('Welcome to O2OA developer Cli v'+ pkg.version);
