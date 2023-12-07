@@ -20,14 +20,13 @@
   "dependencies": {
     "@vue/cli": "^5.0.8",
     "chalk": "^5.2.0",
-    "cli-progress": "^3.12.0",
     "commander": "^10.0.1",
     "execa": "^8.0.1",
+    "got": "^11.8.6",
     "inquirer": "^9.2.6",
     "listr": "^0.14.3",
     "listr-update-renderer": "^0.5.0",
-    "ora": "^7.0.1",
-    "simple-git": "^3.21.0"
+    "ora": "^7.0.1"
   },
   "publishConfig": {
     "access": "public"

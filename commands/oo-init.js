@@ -1,4 +1,4 @@
-import {getGitUrl, libs, exists} from "./oo-libs.js";
+import {getGitUrl, getConfig, exists} from "./oo-libs.js";
 import fs from 'node:fs/promises';
 import {ask} from "../lib/questions.js";
 import path from "node:path";
@@ -8,6 +8,7 @@ import {$} from 'execa';
 import UpdaterRenderer from 'listr-update-renderer';
 
 const opts = {};
+let libs = [];
 
 function exitInit(log, color){
     console.log('');
@@ -191,7 +192,6 @@ export async function init(options) {
         return cancel();
     }
 
-
     Object.assign(opts, options);
     opts.intConfirm = opts.confirm || (await ask("oo-init-confirm"));
     //如果不确认，则取消初始化
@@ -207,6 +207,10 @@ export async function init(options) {
     //将 opts 记录下来
     const opt = JSON.stringify(opts, null, '\t');
     await fs.writeFile(path.resolve('', '.o2oa/.options'), opt);
+
+    //获取配置
+    const config = await getConfig();
+    libs = config.libs;
 
     //创建初始化任务
     console.log('');

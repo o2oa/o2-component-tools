@@ -2,12 +2,13 @@ import Listr from "listr";
 import chalk from "chalk";
 import UpdaterRenderer from "listr-update-renderer";
 import path from "node:path";
-import {templates, getGitUrl, exists} from "./oo-libs.js";
+import {getConfig, getGitUrl, exists} from "./oo-libs.js";
 import {$} from "execa";
 import fs from 'node:fs/promises';
 import {ask} from "../lib/questions.js";
 
 let packageManager = 'yarn';
+let templates = {}
 async function setPackage(cwd, npmName) {
     const p = path.resolve(cwd, 'package.json');
     const packageText = await fs.readFile(p);
@@ -115,6 +116,10 @@ export default {
             }
         }
 
+        //获取配置
+        const config = await getConfig();
+        templates = config.templates;
+
         const lib = templates['oovm'];
         const gitUrl = getGitUrl(lib, (opts.protocol || 'https'));
 
@@ -123,6 +128,16 @@ export default {
         console.log('');
         const task = await createTasks(gitUrl, cwd, npmName, opts);
         await task.run();
+
+        const host = await ask("o2serverHost");
+        const port = await ask("o2serverWebPort");
+        const https = await ask("isHttps");
+
+        const json = {
+            devServer: {host, port, https}
+        }
+        const configPath = path.resolve(cwd, 'o2.config.json');
+        await fs.writeFile(configPath, JSON.stringify(json, null, '\t'));
 
         console.log('');
         console.log('');
