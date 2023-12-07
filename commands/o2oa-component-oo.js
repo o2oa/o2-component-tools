@@ -8,17 +8,17 @@ import fs from 'node:fs/promises';
 import {ask} from "../lib/questions.js";
 
 let packageManager = 'yarn';
-let templates = {}
+let templates = {};
+let libs = [];
 async function setPackage(cwd, npmName) {
     const p = path.resolve(cwd, 'package.json');
     const packageText = await fs.readFile(p);
     const packageJson = JSON.parse(packageText);
     packageJson.name = npmName;
-    packageJson.dependencies['@o2oa/action'] = 'file:../.o2oa/o2oa-action';
-    packageJson.dependencies['@o2oa/common'] = 'file:../.o2oa/o2oa-common';
-    packageJson.dependencies['@o2oa/oovm'] = 'file:../.o2oa/o2oa-oovm';
-    packageJson.dependencies['@o2oa/util'] = 'file:../.o2oa/o2oa-util';
-    packageJson.dependencies['@o2oa/ui'] = 'file:../.o2oa/o2oa-ui';
+
+    libs.forEach((lib)=>{
+        packageJson.dependencies[lib.npm] = `file:../.o2oa/${lib.name}`;
+    });
 
     await fs.writeFile(p, JSON.stringify(packageJson, null, '\t'));
 }
@@ -119,6 +119,7 @@ export default {
         //获取配置
         const config = await getConfig();
         templates = config.templates;
+        libs = config.libs;
 
         const lib = templates['oovm'];
         const gitUrl = getGitUrl(lib, (opts.protocol || 'https'));
