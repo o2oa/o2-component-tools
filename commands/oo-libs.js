@@ -26,11 +26,7 @@ async function loadConfigFiles(paths) {
 async function getConfig() {
     const filenames = ['o2oa.config.js', 'o2oa.config.json', 'o2oa.config.mjs'];
     const localConfig = await loadConfigFiles(filenames);
-
     const url = getGitUrl(git.configLib).slice(0, -4);
-
-    console.log(`${url}/-/raw/master/config.json?inline=false`);
-
     const remoteConfig = await got(`${url}/-/raw/master/config.json?inline=false`).json();
     return Object.assign(remoteConfig, localConfig);
 }
