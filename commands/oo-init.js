@@ -110,11 +110,12 @@ function installPackage(lib){
             // await fs.rm(path.resolve(cwd, 'package-lock.json'), {force: true});
 
             //运行yarn 或 npm
-            try{
-                await $({shell: true, cwd})`yarn ${!opts.npmjs ? '--registry https://registry.npmmirror.com' : ''}`;
-            }catch(e){
+            // try{
+            //     await $({shell: true, cwd})`yarn ${!opts.npmjs ? '--registry https://registry.npmmirror.com' : ''}`;
+            // }catch(e){
+            //只使用npm，yarn会将本地依赖包拷贝到node_modules目录，导致修改不会及时生效
                 await $({shell: true, cwd})`npm install ${!opts.npmjs ? '--registry https://registry.npmmirror.com' : ''}`;
-            }
+            // }
         }
     }
 }

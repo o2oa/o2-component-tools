@@ -17,7 +17,11 @@ async function setPackage(cwd, npmName) {
     packageJson.name = npmName;
 
     libs.forEach((lib)=>{
-        packageJson.dependencies[lib.npm] = `file:../.o2oa/${lib.name}`;
+        if (lib.dependencies==='dev'){
+            packageJson.devDependencies[lib.npm] = `file:../.o2oa/${lib.name}`;
+        }else{
+            packageJson.dependencies[lib.npm] = `file:../.o2oa/${lib.name}`;
+        }
     });
 
     await fs.writeFile(p, JSON.stringify(packageJson, null, '\t'));
@@ -67,12 +71,12 @@ async function createTasks(url, cwd, npmName, opts) {
             //安装npm依赖库
             title: `${chalk.bold(chalk.blueBright('Install package dependencies'))}`,
             task: async () => {
-                try{
-                    await $({shell: true, cwd})`yarn ${!opts.npmjs ? '--registry https://registry.npmmirror.com' : ''}`;
-                }catch(e){
+                // try{
+                //     await $({shell: true, cwd})`yarn ${!opts.npmjs ? '--registry https://registry.npmmirror.com' : ''}`;
+                // }catch(e){
                     packageManager = 'npm';
                     await $({shell: true, cwd})`npm install ${!opts.npmjs ? '--registry https://registry.npmmirror.com' : ''}`;
-                }
+                // }
             }
         }
     ], {
