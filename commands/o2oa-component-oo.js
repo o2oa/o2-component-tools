@@ -139,6 +139,11 @@ export default {
         templates = config.templates;
         libs = config.libs;
 
+        try{
+            const opt = await fs.readFile(path.resolve('', '.o2oa/.options'));
+            opts = Object.assign(JSON.parse(opt), opts);
+        }catch(e){}
+
         const qs = Object.keys(templates).map((k) => {
             return {
                 value: k,

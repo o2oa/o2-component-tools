@@ -35,7 +35,7 @@ function getGitUrl(lib, protocol, subGroup=''){
     if (protocol==='ssh'){
         return `ssh://git@${git.server}${(git.sshPort) ? ':'+git.sshPort : ''}/${git.group}${subGroup}/${lib.name}.git`
     }else{
-        return `https://${git.server}${(git.httpsPort) ? ':'+git.httpsPort : ''}/${git.group}/${lib.name}.git`
+        return `https://${git.server}${(git.httpsPort) ? ':'+git.httpsPort : ''}/${git.group}${subGroup}/${lib.name}.git`
     }
 }
 function exists(path) {
