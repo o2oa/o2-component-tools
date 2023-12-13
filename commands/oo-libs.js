@@ -31,9 +31,9 @@ async function getConfig() {
     return Object.assign(remoteConfig, localConfig);
 }
 
-function getGitUrl(lib, protocol){
+function getGitUrl(lib, protocol, subGroup=''){
     if (protocol==='ssh'){
-        return `ssh://git@${git.server}${(git.sshPort) ? ':'+git.sshPort : ''}/${git.group}/${lib.name}.git`
+        return `ssh://git@${git.server}${(git.sshPort) ? ':'+git.sshPort : ''}/${git.group}${subGroup}/${lib.name}.git`
     }else{
         return `https://${git.server}${(git.httpsPort) ? ':'+git.httpsPort : ''}/${git.group}/${lib.name}.git`
     }

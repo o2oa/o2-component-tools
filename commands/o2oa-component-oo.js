@@ -6,6 +6,7 @@ import {getConfig, getGitUrl, exists} from "./oo-libs.js";
 import {$} from "execa";
 import fs from 'node:fs/promises';
 import {ask} from "../lib/questions.js";
+import options from "../lib/options.js";
 
 let packageManager = 'yarn';
 let templates = {};
@@ -26,7 +27,17 @@ async function setPackage(cwd, npmName) {
 
     await fs.writeFile(p, JSON.stringify(packageJson, null, '\t'));
 }
-async function createTasks(url, cwd, npmName, opts) {
+function addLanguage(cwd, appName){
+    const p = path.resolve(cwd, 'src/locales/language.js');
+    return fs.writeFile(p, `
+import {loadAppLp} from '@o2oa/common';
+
+const lps = import.meta.glob('./*.json');
+export default function(){
+    return loadAppLp('${appName}', lps);
+}`);
+}
+async function createTasks(url, cwd, npmName, appName, opts) {
     //创建组件任务
     return new Listr([
         {
@@ -63,8 +74,12 @@ async function createTasks(url, cwd, npmName, opts) {
             //修改当前项目依赖
             title: `${chalk.bold(chalk.blueBright('Check package dependencies'))}`,
             task: () => {
-                //修改 package.json, 修改项目名称，修改依赖
-                return setPackage(cwd, npmName);
+                return Promise.all([
+                    //修改 package.json, 修改项目名称，修改依赖
+                    setPackage(cwd, npmName),
+                    //添加语言包文件
+                    addLanguage(cwd, appName)
+                ]);
             }
         },
         {
@@ -95,11 +110,11 @@ function cancel(){
     return exit(`  🛑  Processing Development Environment is Canceled!`, `yellowBright`);
 }
 function err(txt){
-    return exit(`  ❌  ${txt}`, `redBright`);
+    return exit(`  ❌  [ERROR] ${txt}`, `redBright`);
 }
 
 export default {
-    async oovm(name, opts) {
+    async create(name, opts) {
         const appName = name.startsWith('app-') ? name : 'app-' + name;
         const npmName = '@o2oa/' + appName;
         const cwd = path.resolve('', appName);
@@ -120,18 +135,32 @@ export default {
             }
         }
 
-        //获取配置
         const config = await getConfig();
         templates = config.templates;
         libs = config.libs;
 
-        const lib = templates['oovm'];
-        const gitUrl = getGitUrl(lib, (opts.protocol || 'https'));
+        const qs = Object.keys(templates).map((k) => {
+            return {
+                value: k,
+                name: k+ `${templates[k].description})`
+            }
+        });
+
+        if (!opts.framework) opts.framework = await ask('oo-framework', {choices: qs});
+        const framework = opts.framework.toLowerCase();
+
+        const tp = templates[framework];
+        if (!tp){
+            return err('The application template named '+opts.framework+' was not found');
+        }
+
+        // const lib = templates['oovm'];
+        const gitUrl = getGitUrl(tp, (opts.protocol || 'https'), '/app-templates');
 
         if (!gitUrl) return err('Unable to obtain Git repository address!');
 
         console.log('');
-        const task = await createTasks(gitUrl, cwd, npmName, opts);
+        const task = await createTasks(gitUrl, cwd, npmName, appName, opts);
         await task.run();
 
         const host = await ask("o2serverHost");

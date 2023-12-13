@@ -3,15 +3,18 @@ import {ask} from '../lib/questions.js'
 import chalk from 'chalk';
 
 async function create(name, pkg, q, opts) {
-    if (!opts.framework) opts.framework = await ask(q);
-    const framework = opts.framework.toLowerCase();
+    const componentFactory = (await import(`./o2oa-component-${pkg}.js`)).default;
 
-    const componentXFactory = (await import(`./o2oa-component-${pkg}.js`)).default;
-
-    if (componentXFactory[framework]) {
-        componentXFactory[framework](name, opts);
-    } else {
-        console.log(`${chalk.red('[ERROR] Does not support using ' + options.framework + ' to create O2OA Components')}`);
+    if (pkg==='x'){
+        if (!opts.framework) opts.framework = await ask(q);
+        const framework = opts.framework.toLowerCase();
+        if (componentFactory[framework]) {
+            componentFactory[framework](name, opts);
+        } else {
+            console.log(`${chalk.red('[ERROR] Does not support using ' + opts.framework + ' to create O2OA Components')}`);
+        }
+    }else{
+        componentFactory['create'](name, opts);
     }
 }
 
