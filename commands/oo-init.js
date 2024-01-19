@@ -21,7 +21,7 @@ function cancel(){
 }
 
 async function cloneLib(lib, pull=false) {
-    const cwd = path.resolve('', `.o2oa/${lib.name}`);
+    const cwd = path.resolve('', `${opts.target}/${lib.name}`);
     const url = getGitUrl(lib, opts.protocol);
 
     const existsDir = await exists(cwd);
@@ -29,7 +29,7 @@ async function cloneLib(lib, pull=false) {
         // //如果不存在.git目录，执行git.init
         // const gitInit = {
         //     title: 'Git Init',
-        //     skip: () => exists(path.resolve('', `.o2oa/${lib.name}`, '.git')),
+        //     skip: () => exists(path.resolve('', `${opts.target}/${lib.name}`, '.git')),
         //     task: () => $({shell: true, cwd})`git init`
         // }
         //
@@ -69,7 +69,7 @@ async function cloneLib(lib, pull=false) {
                     }
                 }else{
                     //如果不存在.git目录，执行git.init
-                    if (!(await exists(path.resolve('', `.o2oa/${lib.name}`, '.git')))) {
+                    if (!(await exists(path.resolve('', `${opts.target}/${lib.name}`, '.git')))) {
                         await $({shell: true, cwd})`git init`;
                     }
 
@@ -103,7 +103,7 @@ async function createGitTasks(pull) {
 }
 
 function installPackage(lib){
-    const cwd = path.resolve('', `.o2oa/${lib.name}`);
+    const cwd = path.resolve('', `${opts.target}/${lib.name}`);
     return {
         title: `${chalk.gray('Install package dependencies:')} ${(lib.name)}`,
         // task: () => new Listr([gitInit, addRemote, fetch, reset])
@@ -160,7 +160,7 @@ async function createInitTasks(pull) {
 
 async function checkDir() {
     //将需要依赖的项目clone到.o2oa目录下
-    const o2oaDir = path.resolve('', '.o2oa');
+    const o2oaDir = path.resolve('', opts.target);
 
     const existsO2oaDir = await exists(o2oaDir);
     if (existsO2oaDir) {
@@ -203,21 +203,25 @@ export async function init(options) {
     }
 
     Object.assign(opts, options);
+    if (!opts.target) opts.target = '.o2oa';
 
     opts.intConfirm = opts.confirm || (await ask("oo-init-confirm"));
     //如果不确认，则取消初始化
     if (!opts.intConfirm) return cancel();
 
     //检查开发环境目录
-    const checked = await checkDir();
-    if (!checked) return cancel();
+    if (opts.target && opts.target!=='.'){
+        const checked = await checkDir();
+        if (!checked) return cancel();
+    }
+
 
     //选择clone仓库协议
     opts.protocol = opts.protocol || (await ask("oo-init-protocol"));
 
     //将 opts 记录下来
     const opt = JSON.stringify(opts, null, '\t');
-    await fs.writeFile(path.resolve('', '.o2oa/.options'), opt);
+    await fs.writeFile(path.resolve('', './.options'), opt);
 
     //获取配置
     const config = await getConfig();

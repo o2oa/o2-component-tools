@@ -80,4 +80,15 @@ program
         oo_pull(opts);
     });
 
+program
+    .command('dev' )
+    .description('Quickly clone projects and build a development environment')
+    .option('-y, --confirm', 'Confirm to perform initialization operation')
+    .option('-r, --reinstall', 'Reinstall all dependencies')
+    .option('-n, --npmjs', 'Use official registry')
+    .option('-p, --protocol', 'What protocol is used to clone git repository. https or ssh')
+    .action((opts) => {
+        opts.target = '.';
+        oo_init(opts);
+    });
 program.parse(process.argv);
