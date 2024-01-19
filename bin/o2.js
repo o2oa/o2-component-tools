@@ -5,6 +5,8 @@ import fs from 'fs/promises';
 import create from '../commands/create.js';
 import oo_init from '../commands/oo-init.js';
 import oo_upgrade from '../commands/oo-upgrade.js';
+import oo_pull from '../commands/oo-pull.js';
+import path from "node:path";
 
 const program = new Command();
 
@@ -66,5 +68,16 @@ program
         oo_upgrade(opts);
     });
 
+program
+    .command('pull' )
+    .description('Pull O2OA front-end development environment')
+    .option('-r, --reinstall', 'Reinstall all dependencies')
+    .option('-p, --protocol', 'What protocol is used to clone git repository. https or ssh')
+    .option('-n, --npmjs', 'Use official registry')
+    .option('-y, --confirm', 'Confirm to perform initialization operation')
+    .action(async (opts) => {
+        opts.confirm = true;
+        oo_pull(opts);
+    });
 
 program.parse(process.argv);

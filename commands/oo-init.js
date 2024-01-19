@@ -20,7 +20,7 @@ function cancel(){
     return exitInit(`  🛑  Processing Development Environment is Canceled!`, `yellowBright`);
 }
 
-async function cloneLib(lib) {
+async function cloneLib(lib, pull=false) {
     const cwd = path.resolve('', `.o2oa/${lib.name}`);
     const url = getGitUrl(lib, opts.protocol);
 
@@ -60,22 +60,31 @@ async function cloneLib(lib) {
             title: `${chalk.gray('Check packages:')} ${(lib.name)}`,
             // task: () => new Listr([gitInit, addRemote, fetch, reset])
             task: async () => {
-                //如果不存在.git目录，执行git.init
-                if (!(await exists(path.resolve('', `.o2oa/${lib.name}`, '.git')))) {
-                    await $({shell: true, cwd})`git init`;
-                }
+                if (pull){
+                    try{
+                        await $({shell: true, cwd})`git pull`;
+                    }catch(e){
+                        // console.error(e);
+                        throw e;
+                    }
+                }else{
+                    //如果不存在.git目录，执行git.init
+                    if (!(await exists(path.resolve('', `.o2oa/${lib.name}`, '.git')))) {
+                        await $({shell: true, cwd})`git init`;
+                    }
 
-                //获取origin，如果已有则remove
-                const {stdout} = await $({shell: true, cwd})`git remote`;
-                const origin = stdout.trim();
-                if (origin) {
-                    await $({shell: true, cwd})`git remote remove ${origin}`;
+                    //获取origin，如果已有则remove
+                    const {stdout} = await $({shell: true, cwd})`git remote`;
+                    const origin = stdout.trim();
+                    if (origin) {
+                        await $({shell: true, cwd})`git remote remove ${origin}`;
+                    }
+                    //添加origin
+                    await $({shell: true, cwd})`git remote add origin ${url}`;
+                    //拉取
+                    await $({shell: true, cwd})`git fetch --all`;
+                    await $({shell: true, cwd})`git reset --hard origin/master`;
                 }
-                //添加origin
-                await $({shell: true, cwd})`git remote add origin ${url}`;
-                //拉取
-                await $({shell: true, cwd})`git fetch --all`;
-                await $({shell: true, cwd})`git reset --hard origin/master`;
             }
         }
     }else{
@@ -87,9 +96,9 @@ async function cloneLib(lib) {
     }
 }
 
-async function createGitTasks() {
+async function createGitTasks(pull) {
     return await Promise.all(libs.map(async (lib) => {
-        return await cloneLib(lib)
+        return await cloneLib(lib, pull)
     }));
 }
 
@@ -124,15 +133,15 @@ async function createInstallTasks() {
         return await installPackage(lib)
     }));
 }
-async function createInitTasks() {
+async function createInitTasks(pull) {
     //初始化任务
     return new Listr([
         {
             //首先通过git，获取最新的开发环境依赖库
             title: `${chalk.bold(chalk.blueBright('Get Packages From Gitlab'))}`,
             task: async () => {
-                const ts = await createGitTasks();
-                return new Listr(ts, {concurrent: true});
+                const ts = await createGitTasks(pull);
+                return new Listr(ts, {concurrent: true, exitOnError: false});
             }
         },
         {
@@ -194,6 +203,7 @@ export async function init(options) {
     }
 
     Object.assign(opts, options);
+
     opts.intConfirm = opts.confirm || (await ask("oo-init-confirm"));
     //如果不确认，则取消初始化
     if (!opts.intConfirm) return cancel();
@@ -215,7 +225,7 @@ export async function init(options) {
 
     //创建初始化任务
     console.log('');
-    const task = await createInitTasks();
+    const task = await createInitTasks(opts.pull);
     await task.run();
 
     return true;
@@ -229,10 +239,13 @@ export default async function (options) {
         console.log(`  ✔️  ${chalk.greenBright('The O2OA component development environment is initialized successfully!')}`);
         console.log('');
         console.log(`  👉  You can create components through the following command:`);
-        console.log(`        ${chalk.gray('$')} ${chalk.cyan('o2-cmpt new <your-app-name>')}`);
+        console.log(`        ${chalk.gray('$')} ${chalk.cyan('o2 new <your-app-name>')}`);
         console.log('');
         console.log(`  👉  You can upgrade the development environment with the following command:`);
-        console.log(`        ${chalk.gray('$')} ${chalk.cyan('o2-cmpt upgrade')}`);
+        console.log(`        ${chalk.gray('$')} ${chalk.cyan('o2 upgrade')}`);
+        console.log('');
+        console.log(`  👉  You can pull the development environment with the following command:`);
+        console.log(`        ${chalk.gray('$')} ${chalk.cyan('o2 pull')}`);
         console.log('');
         console.log('');
     }

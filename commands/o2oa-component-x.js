@@ -4,7 +4,7 @@ import vueCreate from "@vue/cli/lib/create.js";
 import chalk from "chalk";
 import {executeCommand} from "@vue/cli/lib/util/executeCommand.js";
 import {ask} from "../lib/questions.js";
-import fs from "fs";
+import fs from "node:fs/promises";
 import {URL} from "url";
 import util from '@vue/cli-shared-utils';
 const {hasYarn, hasPnpm3OrLater} = util;

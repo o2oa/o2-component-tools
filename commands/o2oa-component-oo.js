@@ -147,7 +147,8 @@ export default {
         const qs = Object.keys(templates).map((k) => {
             return {
                 value: k,
-                name: k+ `${templates[k].description})`
+                name: k+ `${templates[k].description})`,
+                description: templates[k].description
             }
         });
 
