@@ -1,6 +1,6 @@
 {
   "name": "@o2oa/component-tools",
-  "version": "2.0.23",
+  "version": "2.0.24",
   "description": "",
   "main": "index.js",
   "type": "module",
@@ -13,7 +13,8 @@
     "url": "ssh://git@git.o2oa.net:2020/o2oa/o2-component-tools.git"
   },
   "bin": {
-    "o2-cmpt": "bin/o2.js"
+    "o2-cmpt": "bin/o2.js",
+    "o2": "bin/o2.js"
   },
   "author": "Tommy",
   "license": "MIT",
