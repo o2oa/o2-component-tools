@@ -16,7 +16,7 @@ program.version(pkg.version, '-v, --vers', 'output the current version');
 
 program
     .command('create <app-name>' )
-    .description('create a new O2OA component')
+    .description('create a new O2OA component - v9')
     .option('-p, --preset <presetName>', 'Skip prompts and use saved or remote preset')
     .option('-d, --default', 'Skip prompts and use default preset')
     .option('-i, --inlinePreset <json>', 'Skip prompts and use inline JSON string as preset')
