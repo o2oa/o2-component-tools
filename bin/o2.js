@@ -81,7 +81,7 @@ program
     });
 
 program
-    .command('dev' )
+    .command('dev')
     .description('Quickly clone projects and build a development environment')
     .option('-y, --confirm', 'Confirm to perform initialization operation')
     .option('-r, --reinstall', 'Reinstall all dependencies')
