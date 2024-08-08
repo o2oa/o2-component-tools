@@ -5,6 +5,7 @@ import chalk from "chalk";
 import {executeCommand} from "@vue/cli/lib/util/executeCommand.js";
 import {ask} from "../lib/questions.js";
 import fs from "node:fs/promises";
+import {existsSync} from 'node:fs';
 import {URL} from "url";
 import util from '@vue/cli-shared-utils';
 const {hasYarn, hasPnpm3OrLater} = util;
@@ -106,7 +107,7 @@ class componentFactory{
         const componentPath = 'x_component_'+name.replace(/\./g, '_');
         const templatePath = path.resolve(__dirname, options["o2_native"]);
 
-        if (f.existsSync(componentPath)){
+        if (existsSync(componentPath)){
             console.log();
             console.log(`👉  `+`${chalk.red('Can not Create Component "'+name+'", file already exists "'+componentPath+'" !')}`);
 
@@ -128,7 +129,7 @@ class componentFactory{
         const componentPath = 'x_component_'+name.replace(/\./g, '_');
         const templatePath = path.resolve(__dirname, options["oovm"]);
 
-        if (f.existsSync(componentPath)){
+        if (existsSync(componentPath)){
             console.log();
             console.log(`👉  `+`${chalk.red('Can not Create Component "'+name+'", file already exists "'+componentPath+'" !')}`);
 
