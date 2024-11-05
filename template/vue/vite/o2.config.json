@@ -1,0 +1,7 @@
+{
+  "devServer": {
+    "host": "<%= o2serverHost %>",
+    "port": "<%= o2serverWebPort %>",
+    "https": <%= isHttps %>
+  }
+}

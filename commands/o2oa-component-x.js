@@ -22,7 +22,7 @@ class componentFactory{
         const componentPath = 'x_component_'+name.replace(/\./g, '_');
 
         let o = (opts || {});
-        const p = preset || path.resolve(__dirname, options.vue3);
+        const p = preset || path.resolve(__dirname, options['vue3 webpack']);
         o.preset = p;
         o.skipGetStarted = true;
         await vueCreate(componentPath, o);
@@ -39,6 +39,64 @@ class componentFactory{
     }
     static async vue2(name, opts) {
         componentFactory.vue3(name, opts, path.resolve(__dirname, options.vue2));
+    }
+    static async vue3_webpack(name, opts) {
+        componentFactory.vue3(name, opts);
+    }
+
+    static async vue3_vite(name, opts) {
+        const componentPath = 'x_component_'+name.replace(/\./g, '_');
+        const templatePath = path.resolve(__dirname, options["vue3 vite"]);
+
+        if (existsSync(componentPath)){
+            console.log();
+            console.log(`👉  `+`${chalk.red('Can not Create Component "'+name+'", file already exists "'+componentPath+'" !')}`);
+
+            return '';
+        }
+
+        const host = await ask("o2serverHost");
+        const port = await ask("o2serverCenterPort");
+        const webPort = await ask("o2serverWebPort");
+        const isHttps = await ask("isHttps");
+
+        await fs.mkdir(componentPath);
+        await componentFactory.cpfile(componentPath, templatePath, {
+            projectName: name,
+            projectPath: componentPath,
+            o2serverHost: host,
+            o2serverCenterPort: port,
+            o2serverWebPort: webPort,
+            isHttps: isHttps
+        });
+
+        // if (packageManager==='yarn'){
+        //     await executeCommand(packageManager, ['add', '@o2oa/component'], componentPath);
+        //     await executeCommand(packageManager, ['add', '@o2oa/oovm'], componentPath);
+        //     await executeCommand(packageManager, ['add', '@o2oa/oovm-scripts', '--dve'], componentPath);
+        // }else{
+        //     await executeCommand(packageManager, ['install', '@o2oa/component', '-save'], componentPath);
+        //     await executeCommand(packageManager, ['install', '@o2oa/oovm', '-save'], componentPath);
+        //     await executeCommand(packageManager, ['install', '@o2oa/oovm-scripts', '-save-dev'], componentPath);
+        // }
+
+        await executeCommand('npm', ['install', '@o2oa/component', '-save'], componentPath);
+        await executeCommand('npm', ['install', 'vue', '-save'], componentPath);
+        await executeCommand('npm', ['install', '@vitejs/plugin-vue', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'vite', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'uglify-js', '-save-dev'], componentPath);
+
+        await componentFactory.writeGulpAppFile(componentPath);
+
+        console.log();
+        console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
+        console.log();
+        console.log(
+            `👉  Get started with the following commands:\n\n` +
+            chalk.cyan(` ${chalk.gray('$')} cd ${componentPath}\n`) +
+            // chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn start' : packageManager === 'pnpm' ? 'pnpm run start' : 'npm run start'}`)
+            chalk.cyan(` ${chalk.gray('$')} ${'npm run dev'}`)
+        );
     }
     static async react(name, opts) {
         const componentPath = 'x_component_'+name.replace(/\./g, '_');
