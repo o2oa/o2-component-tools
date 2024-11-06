@@ -61,9 +61,7 @@ const viteConfig = {
   }
 
   function includeMain(relativePath, extname, nest){
-    // const dir = path.resolve(`${process.cwd()}`, `./dist/${componentPath}/${relativePath}/`);
     const dir = path.resolve(`${process.cwd()}`, `${outDir}/${relativePath}/`);
-    console.log('dir', dir)
     if (existsSync(dir)) {
       return getAllFiles(dir, [], nest).filter(file =>{
         return path.extname(file) === extname;
@@ -95,7 +93,6 @@ const viteConfig = {
       const o = path.parse(lpPath);
 
       const toPath = path.resolve(`${o.dir}`, `${o.name}.min${o.ext}`);
-      console.log('toPath', toPath);
       fs.readFile(lpPath).then((data)=>{
         const miniContent = UglifyJS.minify(data.toString()).code;
         fs.writeFile(toPath, miniContent, 'utf8').catch((err) => {
@@ -120,14 +117,12 @@ const viteConfig = {
     mainFileContent += `});`;
 
     const filePath = path.resolve( `${process.cwd()}`, outDir, `Main.js`);
-    console.log('filePath', filePath)
     fs.writeFile(filePath, mainFileContent, 'utf8').catch((err) => {
       console.error('Failed to generate Main.js:', err);
     });
 
     const miniFileContent = UglifyJS.minify(mainFileContent).code;
     const minFilePath = path.resolve(`${process.cwd()}`, outDir, `Main.min.js`);
-    console.log('minFilePath', minFilePath)
     fs.writeFile(minFilePath, miniFileContent, 'utf8').catch((err) => {
       console.error('Failed to generate Main.min.js:', err);
     });
