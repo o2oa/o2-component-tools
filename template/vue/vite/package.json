@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "o2-build": "vite build",
+    "o2-deploy": "vite build"
   },
   "dependencies": {
   },
