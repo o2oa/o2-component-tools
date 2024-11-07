@@ -21,7 +21,11 @@ const viteConfig = {
     //     passphrase: '1234', // 将此行替换为您的密码
     // },
     host: '0.0.0.0',
-    port: '5556'
+    port: '5556',
+    onError: (err) => {
+      console.error('Server error:', err);
+      throw err;
+    }
   },
   // assetsInclude: ['**/*.html']
 }
