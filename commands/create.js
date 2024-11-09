@@ -7,7 +7,7 @@ async function create(name, pkg, q, opts) {
 
     if (pkg==='x'){
         if (!opts.framework) opts.framework = await ask(q);
-        const framework = opts.framework.toLowerCase().trim().replaceAll(' ','_');
+        const framework = opts.framework.toLowerCase().trim().replaceAll(/[\s-]/g,'_');
         if (componentFactory[framework]) {
             componentFactory[framework](name, opts);
         } else {

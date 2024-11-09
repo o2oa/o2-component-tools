@@ -22,7 +22,7 @@ class componentFactory{
         const componentPath = 'x_component_'+name.replace(/\./g, '_');
 
         let o = (opts || {});
-        const p = preset || path.resolve(__dirname, options['vue3 webpack']);
+        const p = preset || path.resolve(__dirname, options['vue3 vue-cli']);
         o.preset = p;
         o.skipGetStarted = true;
         await vueCreate(componentPath, o);
@@ -40,7 +40,7 @@ class componentFactory{
     static async vue2(name, opts) {
         componentFactory.vue3(name, opts, path.resolve(__dirname, options.vue2));
     }
-    static async vue3_webpack(name, opts) {
+    static async vue3_vue_cli(name, opts) {
         componentFactory.vue3(name, opts);
     }
 
