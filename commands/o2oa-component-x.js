@@ -81,10 +81,11 @@ class componentFactory{
         // }
 
         await executeCommand('npm', ['install', '@o2oa/component', '-save'], componentPath);
-        await executeCommand('npm', ['install', 'vue', '-save'], componentPath);
-        await executeCommand('npm', ['install', '@vitejs/plugin-vue', '-save-dev'], componentPath);
-        await executeCommand('npm', ['install', 'vite', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'vue@^3.0.0', '-save'], componentPath);
+        await executeCommand('npm', ['install', '@vitejs/plugin-vue@^5.0.0', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'vite@^5.0.0', '-save-dev'], componentPath);
         await executeCommand('npm', ['install', 'uglify-js', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'lodash', '-save-dev'], componentPath);
 
         await componentFactory.writeGulpAppFile(componentPath);
 
