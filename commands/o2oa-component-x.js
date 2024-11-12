@@ -99,9 +99,9 @@ class componentFactory{
             chalk.cyan(` ${chalk.gray('$')} ${'npm run dev'}`)
         );
     }
-    static async react(name, opts) {
+    static async react_webpack(name, opts) {
         const componentPath = 'x_component_'+name.replace(/\./g, '_');
-        const templatePath = path.resolve(__dirname, options["react"]);
+        const templatePath = path.resolve(__dirname, options["react webpack"]);
 
         try{
             await executeCommand('npx', ['create-react-app', componentPath, '--scripts-version', '@o2oa/react-scripts']);
@@ -161,6 +161,73 @@ class componentFactory{
         // subprocess.on('close', (code) => {
         //     console.log(`child process close all stdio with code ${code}`);
         // });
+    }
+    static async react_vite(name, opts) {
+        const componentPath = 'x_component_'+name.replace(/\./g, '_');
+        const templatePath = path.resolve(__dirname, options["react vite"]);
+
+        if (existsSync(componentPath)){
+            console.log();
+            console.log(`👉  `+`${chalk.red('Can not Create Component "'+name+'", file already exists "'+componentPath+'" !')}`);
+
+            return '';
+        }
+
+        const host = await ask("o2serverHost");
+        const port = await ask("o2serverCenterPort");
+        const webPort = await ask("o2serverWebPort");
+        const isHttps = await ask("isHttps");
+
+        await fs.mkdir(componentPath);
+        await componentFactory.cpfile(componentPath, templatePath, {
+            projectName: name,
+            projectPath: componentPath,
+            o2serverHost: host,
+            o2serverCenterPort: port,
+            o2serverWebPort: webPort,
+            isHttps: isHttps
+        });
+
+        // if (packageManager==='yarn'){
+        //     await executeCommand(packageManager, ['add', '@o2oa/component'], componentPath);
+        //     await executeCommand(packageManager, ['add', '@o2oa/oovm'], componentPath);
+        //     await executeCommand(packageManager, ['add', '@o2oa/oovm-scripts', '--dve'], componentPath);
+        // }else{
+        //     await executeCommand(packageManager, ['install', '@o2oa/component', '-save'], componentPath);
+        //     await executeCommand(packageManager, ['install', '@o2oa/oovm', '-save'], componentPath);
+        //     await executeCommand(packageManager, ['install', '@o2oa/oovm-scripts', '-save-dev'], componentPath);
+        // }
+
+        await executeCommand('npm', ['install', '@o2oa/component', '-save'], componentPath);
+        await executeCommand('npm', ['install', 'react@^18.0.0', '-save'], componentPath);
+        await executeCommand('npm', ['install', 'react-dom@^18.0.0', '-save'], componentPath);
+
+        await executeCommand('npm', ['install', 'vite@^5.0.0', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', '@vitejs/plugin-react@^4.0.0', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'uglify-js', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'lodash', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'globals@^15.0.0', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'axios', '-save-dev'], componentPath);
+
+        await executeCommand('npm', ['install', '@types/react@^18.0.0', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', '@types/react-dom@^18.0.0', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', '@eslint/js@^9.0.0', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'eslint@^9.0.0', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'eslint-plugin-react@^7.0.0', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'eslint-plugin-react-hooks@^5.0.0', '-save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'eslint-plugin-react-refresh', '-save-dev'], componentPath); //@^0.0.0
+
+        await componentFactory.writeGulpAppFile(componentPath);
+
+        console.log();
+        console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
+        console.log();
+        console.log(
+            `👉  Get started with the following commands:\n\n` +
+            chalk.cyan(` ${chalk.gray('$')} cd ${componentPath}\n`) +
+            // chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn start' : packageManager === 'pnpm' ? 'pnpm run start' : 'npm run start'}`)
+            chalk.cyan(` ${chalk.gray('$')} ${'npm run dev'}`)
+        );
     }
     static async o2_native(name, opts) {
         const componentPath = 'x_component_'+name.replace(/\./g, '_');
@@ -247,7 +314,7 @@ class componentFactory{
             if (stats.isFile()){
                 let content;
                 const ext = path.extname(p).toLowerCase();
-                if (ext==='.js' || ext==='.html' || ext==='.css' || ext==='.json'){
+                if (ext==='.js' || ext==='.jsx' || ext==='.html' || ext==='.css' || ext==='.json'){
                     content = await fs.readFile(p, 'utf8');
                     Object.keys(opts).forEach((k)=>{
                         const reg = new RegExp('\<\%= '+k+' \%\>', 'g');
