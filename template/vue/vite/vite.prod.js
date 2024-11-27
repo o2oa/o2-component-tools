@@ -78,7 +78,7 @@ const viteConfig = {
     const dir = path.resolve(`${process.cwd()}`, `${outDir}/${relativePath}/`);
     if (existsSync(dir)) {
       return getAllFiles(dir, [], nest).filter(file =>{
-        return path.extname(file) === extname;
+        return path.extname(file) === extname && !file.endsWith('.min.js');
       }).map(filePath =>{
         return filePath;
       });
