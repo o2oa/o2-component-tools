@@ -1,0 +1,16 @@
+{
+  "name": "<%= projectPath %>",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "o2-build": "vite build",
+    "o2-deploy": "vite build"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}
