@@ -99,6 +99,63 @@ class componentFactory{
             chalk.cyan(` ${chalk.gray('$')} ${'npm run dev'}`)
         );
     }
+
+    static async vue3_rsbuild(name, opts) {
+        const componentPath = 'x_component_'+name.replace(/\./g, '_');
+        const templatePath = path.resolve(__dirname, options["vue3 rsbuild"]);
+
+        if (existsSync(componentPath)){
+            console.log();
+            console.log(`👉  `+`${chalk.red('Can not Create Component "'+name+'", file already exists "'+componentPath+'" !')}`);
+
+            return '';
+        }
+
+        const host = await ask("o2serverHost");
+        const port = await ask("o2serverCenterPort");
+        const webPort = await ask("o2serverWebPort");
+        const isHttps = await ask("isHttps");
+
+        await fs.mkdir(componentPath);
+        await componentFactory.cpfile(componentPath, templatePath, {
+            projectName: name,
+            projectPath: componentPath,
+            o2serverHost: host,
+            o2serverCenterPort: port,
+            o2serverWebPort: webPort,
+            isHttps: isHttps
+        });
+
+        // if (packageManager==='yarn'){
+        //     await executeCommand(packageManager, ['add', '@o2oa/component'], componentPath);
+        //     await executeCommand(packageManager, ['add', '@o2oa/oovm'], componentPath);
+        //     await executeCommand(packageManager, ['add', '@o2oa/oovm-scripts', '--dve'], componentPath);
+        // }else{
+        //     await executeCommand(packageManager, ['install', '@o2oa/component', '-save'], componentPath);
+        //     await executeCommand(packageManager, ['install', '@o2oa/oovm', '-save'], componentPath);
+        //     await executeCommand(packageManager, ['install', '@o2oa/oovm-scripts', '-save-dev'], componentPath);
+        // }
+
+        await executeCommand('npm', ['install', '@o2oa/component', '--save'], componentPath);
+        await executeCommand('npm', ['install', 'vue@^3.0.0', '--save'], componentPath);
+        await executeCommand('npm', ['install', '@rsbuild/core@^1.6.0', '--save-dev'], componentPath);
+        await executeCommand('npm', ['install', '@rsbuild/plugin-vue@^1.0.0', '--save-dev'], componentPath);
+        await executeCommand('npm', ['install', '@rsbuild/plugin-umd@^1.0.0', '--save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'uglify-js', '--save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'axios', '--save-dev'], componentPath);
+
+        await componentFactory.writeGulpAppFile(componentPath);
+
+        console.log();
+        console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
+        console.log();
+        console.log(
+            `👉  Get started with the following commands:\n\n` +
+            chalk.cyan(` ${chalk.gray('$')} cd ${componentPath}\n`) +
+            // chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn start' : packageManager === 'pnpm' ? 'pnpm run start' : 'npm run start'}`)
+            chalk.cyan(` ${chalk.gray('$')} ${'npm run dev'}`)
+        );
+    }
     static async react_webpack(name, opts) {
         const componentPath = 'x_component_'+name.replace(/\./g, '_');
         const templatePath = path.resolve(__dirname, options["react webpack"]);
@@ -216,6 +273,63 @@ class componentFactory{
         await executeCommand('npm', ['install', 'eslint-plugin-react@^7.0.0', '-save-dev'], componentPath);
         await executeCommand('npm', ['install', 'eslint-plugin-react-hooks@^5.0.0', '-save-dev'], componentPath);
         await executeCommand('npm', ['install', 'eslint-plugin-react-refresh', '-save-dev'], componentPath); //@^0.0.0
+
+        await componentFactory.writeGulpAppFile(componentPath);
+
+        console.log();
+        console.log(`👉  `+`${chalk.green('O2OA Comonent "'+componentPath+'" Created!')}`);
+        console.log();
+        console.log(
+            `👉  Get started with the following commands:\n\n` +
+            chalk.cyan(` ${chalk.gray('$')} cd ${componentPath}\n`) +
+            // chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn start' : packageManager === 'pnpm' ? 'pnpm run start' : 'npm run start'}`)
+            chalk.cyan(` ${chalk.gray('$')} ${'npm run dev'}`)
+        );
+    }
+    static async react_rsbuild(name, opts) {
+        const componentPath = 'x_component_'+name.replace(/\./g, '_');
+        const templatePath = path.resolve(__dirname, options["react rsbuild"]);
+
+        if (existsSync(componentPath)){
+            console.log();
+            console.log(`👉  `+`${chalk.red('Can not Create Component "'+name+'", file already exists "'+componentPath+'" !')}`);
+
+            return '';
+        }
+
+        const host = await ask("o2serverHost");
+        const port = await ask("o2serverCenterPort");
+        const webPort = await ask("o2serverWebPort");
+        const isHttps = await ask("isHttps");
+
+        await fs.mkdir(componentPath);
+        await componentFactory.cpfile(componentPath, templatePath, {
+            projectName: name,
+            projectPath: componentPath,
+            o2serverHost: host,
+            o2serverCenterPort: port,
+            o2serverWebPort: webPort,
+            isHttps: isHttps
+        });
+
+        // if (packageManager==='yarn'){
+        //     await executeCommand(packageManager, ['add', '@o2oa/component'], componentPath);
+        //     await executeCommand(packageManager, ['add', '@o2oa/oovm'], componentPath);
+        //     await executeCommand(packageManager, ['add', '@o2oa/oovm-scripts', '--dve'], componentPath);
+        // }else{
+        //     await executeCommand(packageManager, ['install', '@o2oa/component', '-save'], componentPath);
+        //     await executeCommand(packageManager, ['install', '@o2oa/oovm', '-save'], componentPath);
+        //     await executeCommand(packageManager, ['install', '@o2oa/oovm-scripts', '-save-dev'], componentPath);
+        // }
+
+        await executeCommand('npm', ['install', '@o2oa/component', '--save'], componentPath);
+        await executeCommand('npm', ['install', 'react@^18.0.0', '--save'], componentPath);
+        await executeCommand('npm', ['install', 'react-dom@^18.0.0', '--save'], componentPath);
+        await executeCommand('npm', ['install', '@rsbuild/core@^1.6.0', '--save-dev'], componentPath);
+        await executeCommand('npm', ['install', '@rsbuild/plugin-react@^1.0.0', '--save-dev'], componentPath);
+        await executeCommand('npm', ['install', '@rsbuild/plugin-umd@^1.0.0', '--save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'uglify-js', '--save-dev'], componentPath);
+        await executeCommand('npm', ['install', 'axios', '--save-dev'], componentPath);
 
         await componentFactory.writeGulpAppFile(componentPath);
 
